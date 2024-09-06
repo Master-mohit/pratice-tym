@@ -20,5 +20,12 @@ caption: String,
         ref : "user"
     }
  ],
+deletes: [
+    {
+        type: mongoose.Schema.Types.ObjectId,
+        ref : "user"
+    }
+ ],
+
 })
 module.exports = mongoose.model("post", postSchema);

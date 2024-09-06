@@ -107,9 +107,30 @@ router.post("/register", function(req, res, next){
   });
   
 
-  router.get('/username/:kuch',isLogDinIn, async function(req, res) {
-    const regex = new RegExp(`${req.params.kuch}`, 'i');
-  const user = await userModel.find({kuch , regex});
+  router.get('/username/:username',isLogDinIn, async function(req, res) {
+    const regex = new RegExp(`${req.params.username}`, 'i');
+  const user = await userModel.find({username : regex});
    res.json(user)
   });
+
+  router.get('/like/:id',isLogDinIn,async function(req, res) {
+   const user = await userModel.findOne({username: req.session.passport.user});
+   const post = await postModel.findOne({_id : req.params.id});
+  if(post.likes.indexOf(user._id) === -1){
+    post.likes.push(user._id);
+  }
+  else {
+   post.likes.splice(post.likes.indexOf(user._id), 1);
+  }
+   await post.save();
+   res.redirect('/feed'); 
+  });
+  
+  router.get('/delete/:id',isLogDinIn, async function(req, res) {
+   const user = await userModel.findOne({username: req.session.passport.user});
+   const post = await postModel.findByIdAndDelete({_id : req.params.id});  
+   res.redirect("/feed")
+  });
+  
+
 module.exports = router;
